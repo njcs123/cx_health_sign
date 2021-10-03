@@ -8,6 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    env:
+      users: ${{ secrets.USERS }}
+      send: ${{ secrets.SEND }}
+      log_password: ${{ secrets.LOGPASS }}
+    if: ${{ env.users != ''}}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -18,21 +23,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Start Report
-        env:
-          users: ${{ secrets.USERS }}
-          send: ${{ secrets.SEND }}
-        if: ${{ env.users != ''}}
         run: |
           python main.py gh > output.log
       - name: Encrypt Log
-        env:
-          log_password: ${{ secrets.LOGPASS }}
-        if: ${{ env.users != '' && env.log_password != ''}}
+        if: ${{ env.log_password != ''}}
         run: |
           sudo apt-get install -y p7zip-full
           7z a -p${{ env.log_password }} -mx0 -mhe log.7z output.log
           rm output.log
       - name: Upload Log
+        if: ${{ env.log_password != ''}}
         uses: actions/upload-artifact@v2
         with:
           name: logs
