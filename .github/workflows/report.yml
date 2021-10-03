@@ -43,6 +43,6 @@ jobs:
           path: ${{ github.workspace }}/log.7z
       - name: Delete Log and Session
         run: |
-          rm output.log
+          rm -f output.log
           rm -rf session/*.sess
-          rm log.7z
+          rm -f log.7z
