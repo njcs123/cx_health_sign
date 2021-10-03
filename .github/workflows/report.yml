@@ -8,32 +8,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    env:
-      users: ${{ secrets.USERS }}
-      send: ${{ secrets.SEND }}
-      log_password: ${{ secrets.LOGPASS }}
-    if: ${{ env.users != ''}}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Set Environment
-        run: |
+      - run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Start Report
-        run: |
-          python main.py gh > output.log
-      - name: Encrypt Log
-        if: ${{ env.log_password != ''}}
-        run: |
-          sudo apt-get install -y p7zip-full
-          7z a -p${{ env.log_password }} -mx0 -mhe log.7z output.log
-          rm output.log
-      - name: Upload Log
-        if: ${{ env.log_password != ''}}
-        uses: actions/upload-artifact@v2
-        with:
-          name: logs
-          path: ${{ env.GITHUB_WORKSPACE }}/log.7z
+      - name: Report Start
+        env:
+          users: ${{ secrets.USERS }}
+          send: ${{ secrets.SEND }}
+        run: "python main.py gh"
