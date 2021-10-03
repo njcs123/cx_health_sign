@@ -26,6 +26,7 @@ jobs:
           python main.py gh > output.log
       - name: Encrypt Log
         env:
+          users: ${{ secrets.USERS }}
           log_password: ${{ secrets.LOGPASS }}
         if: ${{ env.users != '' && env.log_password != ''}}
         run: |
@@ -33,6 +34,10 @@ jobs:
           7z a -p${{ env.log_password }} -mx0 -mhe log.7z output.log
           rm output.log
       - name: Upload Log
+        env:
+          users: ${{ secrets.USERS }}
+          log_password: ${{ secrets.LOGPASS }}
+        if: ${{ env.users != '' && env.log_password != ''}}
         uses: actions/upload-artifact@v2
         with:
           name: logs
