@@ -32,7 +32,6 @@ jobs:
         run: |
           sudo apt-get install -y p7zip-full
           7z a -p${{ env.log_password }} -mx0 -mhe log.7z output.log
-          rm output.log
       - name: Upload Log
         env:
           users: ${{ secrets.USERS }}
@@ -42,3 +41,8 @@ jobs:
         with:
           name: logs
           path: ${{ github.workspace }}/log.7z
+      - name: Delete Log and Session
+        run: |
+          rm output.log
+          rm log.7z
+          rm -rf session/*.sess
